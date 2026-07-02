@@ -169,8 +169,27 @@ function nextTrial() {
 
             if (!isRunning) return;
 
-            /* 合計2.5秒後に判定 */
+            /* 反応なしの場合も正誤表示 */
             if (!responded) {
+
+                if (index >= 3) {
+
+                    let current = sequence[index - 1];
+                    let back2 = sequence[index - 3];
+
+                    let match =
+                        current.toLowerCase() === back2.toLowerCase();
+
+                    if (match) {
+                        feedbackDiv.innerText = "× 不正解";
+                        feedbackDiv.className = "incorrect";
+                    }
+                    else {
+                        feedbackDiv.innerText = "○ 正解";
+                        feedbackDiv.className = "correct";
+                    }
+                }
+
                 evaluate(false);
             }
 
@@ -256,6 +275,7 @@ function evaluate(clicked) {
 
     logs.push([
         logs.length + 1,
+        current,
         hit,
         miss,
         fa,
@@ -278,7 +298,7 @@ function endGame() {
 function exportCSV() {
 
     let csv =
-        "trial,Hit,Miss,FalseAlarm,CorrectRejection\n";
+        "trial,Letter,Hit,Miss,FalseAlarm,CorrectRejection\n";
 
     logs.forEach(row => {
         csv += row.join(",") + "\n";
